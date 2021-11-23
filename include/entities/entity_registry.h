@@ -15,11 +15,4 @@ typedef struct EntityRegistry {
 
 } EntityRegistry;
 
-Entity CreateEntity(World* world);
-
-// Removing an entity will also destroy the components attached to it
-void RemoveEntity(Entity_ID entity);
-
-internal uint64_t _get_unused_id();
-
 #endif

@@ -3,11 +3,10 @@
 
 #include "util.h"
 
-// No prebuild component are given you have to create one
-// based on the base structure component that will have
-// infos about the component your creating
-typedef struct Component {
-	uint32_t offset;
-} Component;
+#define component(name, elements...) \
+extern uint32_t const CID_##name = __COUNTER__;\
+typedef struct name##Component {\
+	elements\
+} name\
 
 #endif

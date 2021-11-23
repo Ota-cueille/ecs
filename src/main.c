@@ -1,12 +1,12 @@
 #include <stdio.h>
 
-#include "world/world.h"
+#include "ecs/ecs.h"
+#include "components/my_components.h"
 
 int main(int argc, char* argv[]) {
 
-	World a1;
-
-	Entity e1 = CreateEntity(&a1);
+	ecs_init(1, sizeof(position));
+	get_component(position, 100);
 
 	return 0;
 

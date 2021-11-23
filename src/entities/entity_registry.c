@@ -1,14 +1,6 @@
-#include "entities/entity_registry.h"
+#include "ecs/ecs.h"
 
-Entity CreateEntity(World* world) {
-	Entity e = {
-		_get_unused_id(),
-		world
-	};
-	return e;
-}
-
-static struct {
+internal struct {
 	uint64_t *deleted_id, deleted_id_count, current_max_id;
 } id_factory;
 

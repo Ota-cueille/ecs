@@ -2,7 +2,6 @@
 #define ENTITY
 
 #include "util.h"
-#include "world/world.h"
 
 typedef uint64_t Entity_ID;
 
@@ -10,13 +9,10 @@ typedef uint64_t Entity_ID;
 // that has different component, some utils could be added
 // in the future to simplify the utilisation of the ECS
 
-struct Entity {
+typedef struct Entity {
 
 	Entity_ID id;
-	World* world;
 
-};
-
-typedef struct Entity Entity;
+} Entity;
 
 #endif
