@@ -7,4 +7,8 @@ component(position,
 	uint32_t x, y;
 );
 
+component(tag,
+	const char* name;
+);
+
 #endif

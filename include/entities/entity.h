@@ -12,6 +12,7 @@ typedef uint64_t Entity_ID;
 typedef struct Entity {
 
 	Entity_ID id;
+	bool* component_mask;
 
 } Entity;
 
