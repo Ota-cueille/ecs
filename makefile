@@ -11,6 +11,7 @@ DEBUG_EXEC = $(DEBUG_DIR)/$(addsuffix -debug, $(EXEC))
 # DIRECTORIES
 ifndef SRC
 	SRC = src/main.c
+	SRC += src/ecs/ecs.c
 endif
 
 # DEPENDENCIES
@@ -18,7 +19,7 @@ INCLUDE_DIR = -I include
 RELEASE_OBJS_DIR = $(RELEASE_DIR)/OBJ
 DEBUG_OBJS_DIR = $(DEBUG_DIR)/OBJ
 
-DEBUG_FLAGS = -g
+DEBUG_FLAGS = -g -Wall
 CC_FLAGS = -static -static-libgcc
 
 LIBS=
@@ -42,7 +43,7 @@ $(RELEASE_EXEC):
     done
 	$(CC) -o $@ $(RELEASE_OBJS_DIR)/*.o $(CC_FLAGS) $(LIBS)
 
-COMPILE_RELEASE = $(SRC:$(SRC)=$(RELEASE_OBJS_DIR)/$(patsubst %.cpp,%.o,$(lastword $(subst /, ,$(SRC)))))
+COMPILE_RELEASE = $(SRC:$(SRC)=$(RELEASE_OBJS_DIR)/$(patsubst %.c,%.o,$(lastword $(subst /, ,$(SRC)))))
 
 compile_release: $(COMPILE_RELEASE)
 
@@ -58,7 +59,7 @@ $(DEBUG_EXEC):
     done
 	$(CC) -o $@ $(DEBUG_OBJS_DIR)/*.o $(CC_FLAGS) $(LIBS)
 
-COMPILE_DEBUG = $(SRC:$(SRC)=$(DEBUG_OBJS_DIR)/$(patsubst %.cpp,%.o,$(lastword $(subst /, ,$(SRC)))))
+COMPILE_DEBUG = $(SRC:$(SRC)=$(DEBUG_OBJS_DIR)/$(patsubst %.c,%.o,$(lastword $(subst /, ,$(SRC)))))
 
 compile_debug: $(COMPILE_DEBUG)
 
