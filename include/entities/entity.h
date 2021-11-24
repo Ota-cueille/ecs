@@ -3,11 +3,10 @@
 
 #include "util.h"
 
-typedef uint64_t Entity_ID;
+// this fix the maximum number of entities
+#define MAX_ENTITIES 100
 
-// Really an entity is just some way to identify the object
-// that has different component, some utils could be added
-// in the future to simplify the utilisation of the ECS
+typedef uint64_t Entity_ID;
 
 typedef struct Entity {
 

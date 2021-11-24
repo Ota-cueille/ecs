@@ -1,17 +1,17 @@
 #include "ecs/ecs.h"
 
-#include <stdarg.h>
-
 EntityComponentSystem ecs;
 
 void ecs_init(uint32_t component_count, ...) {
+	// setting the component count
 	ecs.component_count = component_count;
+
+	// allocation space for the component offset array ans setting all id's available
 	ecs.component_offset = (uint64_t*)calloc(component_count, sizeof(uint64_t));
 	memset(ecs.id_factory.available_ids, true, MAX_ENTITIES * sizeof(bool));
 
 	// we are determining the size to allocate for one entity so that
-	// this entity will have enough space to store all the components
-	// it wants
+	// entities will have enough space to store all the components they want
 	va_list component_size;
 	va_start(component_size, component_count);
 
@@ -20,10 +20,13 @@ void ecs_init(uint32_t component_count, ...) {
 	for(uint32_t i = 0; i < component_count; i++) {
 		// getting the size of the component
 		current_component_size = va_arg(component_size, uint64_t);
+
 		// storing the offset of the component at it's id so we can retrieve it by id
 		ecs.component_offset[i] = total_offset;
+
 		// getting the offset of the component in the entity storage
 		total_offset += current_component_size;
+
 		// calculating the size needed to store the components for one entity
 		ecs.entity_storage += ecs.component_offset[i];
 	}
@@ -70,15 +73,24 @@ bool _is_available_id() {
 	return false;
 }
 
+/// the test in the _get_unused_id() while loop is absolutly not optimal
+/// TODO: find a better solution
+
 uint64_t _get_unused_id() {
+	// while we can create entities
 	while(_is_available_id()) {
-		if(ecs.id_factory.available_ids[ecs.id_factory.current_id]) {
-			return ecs.id_factory.current_id;
-		}
-		if(!ecs.id_factory.current_id % MAX_ENTITIES) {
+		// if the current id is less than the maximum
+		if(!(ecs.id_factory.current_id >= MAX_ENTITIES)) {
+			// increment id by one
 			ecs.id_factory.current_id++;
 		} else {
+			// otherwise set it to zero again to begin a new cycle
 			ecs.id_factory.current_id = 0;
+		}
+		// looking if the last id is available
+		if(ecs.id_factory.available_ids[ecs.id_factory.current_id]) {
+			// if so return it
+			return ecs.id_factory.current_id-1;
 		}
 	}
 	// there are no more IDs available

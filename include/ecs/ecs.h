@@ -2,7 +2,8 @@
 #define ECS
 
 #include "util.h"
-#include "entities/entity_registry.h"
+#include "entities/entity.h"
+#include "components/components.h"
 
 typedef struct EntityComponentSystem {
 	uint64_t entity_storage, component_count, entity_count;

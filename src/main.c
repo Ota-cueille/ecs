@@ -3,25 +3,43 @@
 #include "ecs/ecs.h"
 #include "components/my_components.h"
 
+#define TILE_COUNT 10
+
+typedef struct EntityInfo {
+	position* pos;
+	tag* name;
+} EInfo;
+
+const char* number[10] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+
 int main(int argc, char* argv[]) {
 
 	ecs_init(2, sizeof(position), sizeof(tag));
 
-	Entity my_entity = CreateEntity();
+	Entity tiles[TILE_COUNT];
+	EInfo tiles_infos[TILE_COUNT];
 
-	position a = { 0, 0 };
-	position* m_Position = set_component(position, my_entity, a);
-
-	tag name = { "First Entity !!!" };
-	tag* m_Tag = set_component(tag, my_entity, name);
-
-	if(has_component(position, my_entity) && has_component(tag, my_entity)) {
-		position my_entity_position = get_component(position, my_entity);
-		tag my_entity_tag = get_component(tag, my_entity);
-		printf("L'entitee %s a pour position: (%d;%d)\n", my_entity_tag.name, my_entity_position.x, my_entity_position.y);
+	for(size_t i = 0; i < TILE_COUNT; i++) {
+		position tile_pos = {
+			i, 0
+		};
+		tag tile_name = { &number[i] };
+		
+		tiles[i] = CreateEntity();
+		tiles_infos[i].pos = set_component(position, tiles[i], tile_pos);
+		tiles_infos[i].name = set_component(tag, tiles[i], tile_name);
 	}
 
-	RemoveEntity(&my_entity);
+	if(has_component(tag, tiles[5])) {
+		EInfo tile_5_info = tiles_infos[5];
+		printf("tile number: %s\nposition >> %d, %d\n", tile_5_info.name->name, tile_5_info.pos->x, tile_5_info.pos->y);
+	}
+
+	for(size_t i = 0; i < TILE_COUNT; i++) {
+		RemoveEntity(&tiles[i]);
+	}
+
+	ecs_clear();
 
 	return 0;
 }
