@@ -10,8 +10,6 @@ typedef struct EntityInfo {
 	tag* name;
 } EInfo;
 
-const char* number[10] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
-
 int main(int argc, char* argv[]) {
 
 	ecs_init(2, sizeof(position), sizeof(tag));
@@ -23,9 +21,10 @@ int main(int argc, char* argv[]) {
 		position tile_pos = {
 			i, 0
 		};
-		tag tile_name = { &number[i] };
+		tag tile_name = { 0 };
+		tile_name.name[0] = 48+i;
 		
-		tiles[i] = CreateEntity();
+		tiles[i] = create_entity();
 		tiles_infos[i].pos = set_component(position, tiles[i], tile_pos);
 		tiles_infos[i].name = set_component(tag, tiles[i], tile_name);
 	}
@@ -36,7 +35,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	for(size_t i = 0; i < TILE_COUNT; i++) {
-		RemoveEntity(&tiles[i]);
+		remove_entity(&tiles[i]);
 	}
 
 	ecs_clear();

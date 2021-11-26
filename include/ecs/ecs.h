@@ -27,8 +27,8 @@ uint64_t _get_unused_id();
 address _internal_get_component(Entity entity, uint64_t component_id);
 bool _internal_has_component(Entity entity, uint64_t component_id);
 
-Entity CreateEntity();
-void RemoveEntity(Entity*);
+Entity create_entity();
+void remove_entity(Entity*);
 
 #define set_component(type, entity, data) _internal_set_##type##_component(entity, data)
 #define get_component(type, entity) (*((type*)_internal_get_component(entity, CID_##type)))

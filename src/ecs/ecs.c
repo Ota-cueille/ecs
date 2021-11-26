@@ -45,7 +45,7 @@ void ecs_clear() {
 	ecs.component_offset = NULL;
 }
 
-Entity CreateEntity() {
+Entity create_entity() {
 	Entity e;
 	e.id = _get_unused_id();
 	e.component_mask = (bool*)calloc(ecs.component_count, sizeof(bool));
@@ -56,7 +56,7 @@ Entity CreateEntity() {
 	return e;
 }
 
-void RemoveEntity(Entity* e) {
+void remove_entity(Entity* e) {
 	free(e->component_mask);
 	e->component_mask = NULL;
 	ecs.id_factory.available_ids[e->id] = true;

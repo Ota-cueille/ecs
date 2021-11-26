@@ -3,12 +3,19 @@
 
 #include "ecs/ecs.h"
 
-component(position,
-	uint32_t x, y;
+p_component(tag,
+	char name[10];
 )
 
-component(tag,
-	const char* name;
+void copy_tag_component(address component_address, tag component_data) {
+	// for(size_t i = 0; component_data.name[i] != '\0'; i++) {
+    //    ((tag*)component_address)->name[i] = component_data.name[i];
+	// }
+	strcpy(&(((tag*)component_address)->name[0]), &component_data.name[0]);
+}
+
+component(position,
+	uint32_t x, y;
 )
 
 #endif
