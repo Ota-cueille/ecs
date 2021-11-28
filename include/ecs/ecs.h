@@ -18,7 +18,9 @@ typedef struct EntityComponentSystem {
 
 extern EntityComponentSystem ecs;
 
-void ecs_init(uint32_t component_count, ...);
+void _ecs_init(uint32_t component_count, ...);
+#define ecs_init(components...) _ecs_init(__NARG__(components), WRAP(sizeof, components))
+
 void ecs_clear();
 
 bool _is_available_id();

@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "ecs/ecs.h"
 #include "components/my_components.h"
 
@@ -12,7 +10,9 @@ typedef struct EntityInfo {
 
 int main(int argc, char* argv[]) {
 
-	ecs_init(2, sizeof(position), sizeof(tag));
+	ecs_init(tag, position, texture);
+
+	// _ecs_init(2, sizeof(position), sizeof(tag));
 
 	Entity tiles[TILE_COUNT];
 	EInfo tiles_infos[TILE_COUNT];

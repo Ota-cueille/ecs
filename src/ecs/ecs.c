@@ -2,7 +2,7 @@
 
 EntityComponentSystem ecs;
 
-void ecs_init(uint32_t component_count, ...) {
+void _ecs_init(uint32_t component_count, ...) {
 	// setting the component count
 	ecs.component_count = component_count;
 

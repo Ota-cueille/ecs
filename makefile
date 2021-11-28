@@ -20,7 +20,7 @@ RELEASE_OBJS_DIR = $(RELEASE_DIR)/OBJ
 DEBUG_OBJS_DIR = $(DEBUG_DIR)/OBJ
 
 DEBUG_FLAGS = -g -Wall
-CC_FLAGS = -static -static-libgcc
+CC_FLAGS = -static -static-libgcc -std=gnu17
 
 LIBS=
 

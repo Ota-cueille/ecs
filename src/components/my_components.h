@@ -18,4 +18,9 @@ component(position,
 	uint32_t x, y;
 )
 
+component(texture,
+	uint32_t id;
+	float x, y, z;
+)
+
 #endif
