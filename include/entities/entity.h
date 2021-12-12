@@ -4,7 +4,7 @@
 #include "util.h"
 
 // this fix the maximum number of entities
-#define MAX_ENTITIES 100
+#define MAX_ENTITIES 50000
 
 typedef uint64_t Entity_ID;
 

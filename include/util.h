@@ -14,8 +14,14 @@
 #include "boost/preprocessor/seq/for_each_i.hpp"
 #include "boost/preprocessor/variadic/to_seq.hpp"
 
-#define COMMA_SEP(r, token, i, e) BOOST_PP_COMMA_IF(i) token(e)
-#define WRAP(token, ...) BOOST_PP_SEQ_FOR_EACH_I(COMMA_SEP, token, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))
+#define PARENTHESIS_COMMA_SEP(r, token, i, e) BOOST_PP_COMMA_IF(i) token(e)
+#define WRAP(token, ...) BOOST_PP_SEQ_FOR_EACH_I(PARENTHESIS_COMMA_SEP, token, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))
+
+#define CAT_BACK_(r, data, i, elem) BOOST_PP_COMMA_IF(i) BOOST_PP_CAT(data, elem)
+#define CAT_BACK(token, ...) BOOST_PP_SEQ_FOR_EACH_I(CAT_BACK_, token, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))
+
+#define EQUAL_(r, data, i, elem) BOOST_PP_COMMA_IF(i) elem = data + i // BOOST_PP_CAT(elem, data)
+#define EQUAL(token, ...) BOOST_PP_SEQ_FOR_EACH_I(EQUAL_, token, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))
 
 #define __NARG__(...)  __NARG_I_(__VA_ARGS__,__RSEQ_N())
 #define __NARG_I_(...) __ARG_N(__VA_ARGS__)

@@ -2,7 +2,7 @@
 
 EntityComponentSystem ecs;
 
-void _ecs_init(uint32_t component_count, ...) {
+void _internal_ecs_init(uint32_t component_count, ...) {
 	// setting the component count
 	ecs.component_count = component_count;
 
@@ -53,15 +53,27 @@ Entity create_entity() {
 
 	ecs.id_factory.available_ids[e.id] = false;
 
+	ecs.created_entities = realloc(ecs.created_entities, ecs.entity_count * sizeof(Entity));
+	ecs.created_entities[ecs.entity_count - 1].id = e.id;
+	ecs.created_entities[ecs.entity_count - 1].component_mask = e.component_mask;
+	ecs.created_entities_end  = ecs.created_entities + ecs.entity_count;
+	
 	return e;
 }
 
 void remove_entity(Entity* e) {
 	free(e->component_mask);
 	e->component_mask = NULL;
+
 	ecs.id_factory.available_ids[e->id] = true;
+
 	e->id = MAX_ENTITIES;
 	ecs.entity_count--;
+
+	ecs.created_entities[ecs.entity_count].id = MAX_ENTITIES;
+	ecs.created_entities[ecs.entity_count].component_mask = NULL;
+	ecs.created_entities = realloc(ecs.created_entities, ecs.entity_count * sizeof(Entity));
+	ecs.created_entities_end = ecs.created_entities + ecs.entity_count;
 }
 
 bool _is_available_id() {
@@ -73,12 +85,10 @@ bool _is_available_id() {
 	return false;
 }
 
-/// the test in the _get_unused_id() while loop is absolutly not optimal
-/// TODO: find a better solution
 
 uint64_t _get_unused_id() {
 	// while we can create entities
-	while(_is_available_id()) {
+	while(ecs.entity_count < MAX_ENTITIES) {
 		// if the current id is less than the maximum
 		if(!(ecs.id_factory.current_id >= MAX_ENTITIES)) {
 			// increment id by one
@@ -94,7 +104,6 @@ uint64_t _get_unused_id() {
 		}
 	}
 	// there are no more IDs available
-	assert(false);
 	return MAX_ENTITIES;
 }
 
@@ -104,4 +113,61 @@ address _internal_get_component(Entity entity, uint64_t component_id) {
 
 bool _internal_has_component(Entity entity, uint64_t component_id) {
 	return entity.component_mask[component_id];
+}
+
+bool _internal_has_components(Entity entity, uint64_t* component_ids, uint32_t component_count) {
+	bool has = true;
+	for(uint64_t i = 0; i < component_count; i++) {
+		has = has && entity.component_mask[component_ids[i]];
+	}
+	return has;
+}
+
+void _internal_group_components(uint32_t component_count, ...) {
+	if(component_count == 0) return;
+
+	va_list component_ids;
+	va_start(component_ids, component_count);
+
+	Entity *owner_entities[MAX_ENTITIES];
+	uint64_t owner_entities_count = 0, *ids = NULL;
+	free(ecs.group.components);
+
+	ids = (uint64_t*)malloc(component_count * sizeof(uint64_t));
+
+	for(uint32_t i = 0; i < component_count; i++) {
+		ids[i] = va_arg(component_ids, uint64_t);
+	}
+
+	for(Entity* e = &ecs.created_entities[0]; e != ecs.created_entities_end; e++) {
+		if(_internal_has_components(*e, ids, component_count)) {
+			owner_entities[owner_entities_count] = e;
+			owner_entities_count++;
+		}
+	}
+
+	ecs.group.count = owner_entities_count;
+	ecs.group.components = calloc(component_count * owner_entities_count, sizeof(address));
+
+	for(uint32_t entity_offset = 0; entity_offset < owner_entities_count; entity_offset++) {
+		for(uint32_t component_offset = 0; component_offset < component_count; component_offset++) {
+			ecs.group.components[entity_offset * component_count + component_offset] = _internal_get_component(*owner_entities[entity_offset], ids[component_offset]);
+		}
+	}
+
+	ecs.group.end = ecs.group.components + component_count * owner_entities_count;
+
+	va_end(component_ids);
+}
+
+void _internal_create_component_tab(uint32_t component_count, ...) {
+	va_list component_ids;
+	va_start(component_ids, component_count);
+	
+	ecs.component_tab = (uint64_t*)realloc(ecs.component_tab, component_count * sizeof(uint64_t));
+	for(uint32_t i = 0; i < component_count; i++) {
+		ecs.component_tab[i] = va_arg(component_ids, uint64_t);
+	}
+
+	va_end(component_ids);
 }
